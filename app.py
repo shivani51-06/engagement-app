@@ -9,10 +9,11 @@ import gdown
 import os
 
 MODEL_PATH = "final_model_v2.pth"
+url = "https://drive.google.com/uc?id=1C0TaYyVNat46tI76BCUFCtgxOljN0k96"
 
+# Download ONLY if not present
 if not os.path.exists(MODEL_PATH):
-    url = "https://drive.google.com/file/d/1C0TaYyVNat46tI76BCUFCtgxOljN0k96"
-    gdown.download(url, MODEL_PATH, quiet=False)
+    gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
 # ── Page config ──────────────────────────────────────────────
 st.set_page_config(
