@@ -15,15 +15,44 @@ GDRIVE_URL = "https://drive.google.com/uc?id=1C0TaYyVNat46tI76BCUFCtgxOljN0k96"
 # ── PAGE CONFIG ──────────────────────────────────────────────
 st.set_page_config(
     page_title="Student Engagement Detector",
-    page_icon="🎓",
+    page_icon=None,
     layout="centered"
 )
 
+# ── THEME STYLES ─────────────────────────────────────────────
+st.markdown("""
+<style>
+    /* Accent colour: indigo-blue */
+    :root { --accent: #4F6EF7; }
+
+    h1 { color: #1E2A5E; letter-spacing: -0.5px; }
+
+    .result-card {
+        border-left: 5px solid var(--accent);
+        background: #F4F6FF;
+        padding: 16px 20px;
+        border-radius: 6px;
+        margin: 16px 0;
+    }
+    .result-label {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .result-low    { color: #D7263D; border-color: #D7263D !important; }
+    .result-medium { color: #E07B00; border-color: #E07B00 !important; }
+    .result-high   { color: #1A7F4B; border-color: #1A7F4B !important; }
+
+    .sidebar-section { font-size: 0.85rem; color: #555; }
+    .sidebar-section b { color: #1E2A5E; }
+</style>
+""", unsafe_allow_html=True)
+
 # ── LABELS ───────────────────────────────────────────────────
 LABELS = {
-    0: ("Low Engagement", "🔴", "#FF4B4B"),
-    1: ("Medium Engagement", "🟡", "#FFA500"),
-    2: ("High Engagement", "🟢", "#00C853"),
+    0: ("Low Engagement",    "result-low",    "#D7263D"),
+    1: ("Medium Engagement", "result-medium", "#E07B00"),
+    2: ("High Engagement",   "result-high",   "#1A7F4B"),
 }
 
 # ── TRANSFORM ────────────────────────────────────────────────
@@ -67,75 +96,67 @@ def predict(face_img):
 
     return label, probs.cpu().numpy()
 
-# ── UI ───────────────────────────────────────────────────────
-st.title("🎓 Student Engagement Detector")
-st.markdown("Capture your image and detect engagement level using **EfficientNet-B2**")
+# ── SIDEBAR ──────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("### About")
+    st.markdown("""
+<div class='sidebar-section'>
+<b>Project:</b> Facial Engagement Detection<br>
+<b>Model:</b> EfficientNet-B2<br>
+<b>Dataset:</b> DAiSEE<br><br>
+<b>Accuracy</b><br>
+&nbsp;&nbsp;Test: 72.6%<br>
+&nbsp;&nbsp;Validation: 74.75%<br><br>
+<b>Classes</b><br>
+&nbsp;&nbsp;Low Engagement<br>
+&nbsp;&nbsp;Medium Engagement<br>
+&nbsp;&nbsp;High Engagement
+</div>
+""", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("<div class='sidebar-section'>SASTRA Deemed University</div>",
+                unsafe_allow_html=True)
+
+# ── MAIN UI ──────────────────────────────────────────────────
+st.title("Student Engagement Detector")
+st.markdown("Take a photo to analyse your engagement level using EfficientNet-B2.")
 st.markdown("---")
 
-# Sidebar
-with st.sidebar:
-    st.header("ℹ️ About")
-    st.markdown("""
-    **Project:** Facial Engagement Detection  
-    **Model:** EfficientNet-B2  
-    **Dataset:** DAiSEE  
-    
-    **Accuracy:**
-    - Test: 72.6%  
-    - Validation: 74.75%  
-
-    **Classes:**
-    - 🔴 Low Engagement  
-    - 🟡 Medium Engagement  
-    - 🟢 High Engagement  
-    """)
-    st.markdown("---")
-    st.markdown("SASTRA Deemed University")
-
-# ── CAMERA INPUT ─────────────────────────────────────────────
-img_file = st.camera_input("📸 Take a photo")
+img_file = st.camera_input("Capture image")
 
 if img_file is not None:
     image = Image.open(img_file)
     frame = np.array(image)
 
-    # Convert RGB → BGR (important)
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(
         gray, scaleFactor=1.1, minNeighbors=5, minSize=(80, 80)
     )
 
     if len(faces) > 0:
-        x, y, w, h = sorted(faces, key=lambda f: f[2]*f[3])[-1]
-
-        # Draw rectangle
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        x, y, w, h = sorted(faces, key=lambda f: f[2] * f[3])[-1]
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (79, 110, 247), 2)
 
         face_crop = frame[y:y+h, x:x+w]
         label_idx, probs = predict(face_crop)
 
-        label_name, emoji, color = LABELS[label_idx]
+        label_name, css_class, color = LABELS[label_idx]
 
-        # Show image
-        st.image(image, caption="Captured Image", use_container_width=True)
+        st.image(image, caption="Captured image", use_container_width=True)
 
-        # Show label
         st.markdown(
-            f"<h2 style='text-align:center; color:{color}'>"
-            f"{emoji} {label_name}</h2>",
+            f"<div class='result-card {css_class}'>"
+            f"<p class='result-label'>{label_name}</p>"
+            f"</div>",
             unsafe_allow_html=True
         )
 
-        # Confidence
-        st.markdown("**Confidence Scores:**")
-        for i, (name, em, _) in LABELS.items():
-            st.progress(
-                float(probs[i]),
-                text=f"{em} {name}: {probs[i]*100:.1f}%"
-            )
+        st.markdown("**Confidence**")
+        for i, (name, _, _color) in LABELS.items():
+            st.progress(float(probs[i]), text=f"{name}: {probs[i]*100:.1f}%")
 
     else:
-        st.image(image, caption="Captured Image", use_container_width=True)
-        st.warning("⚠️ No face detected — please try again")
+        st.image(image, caption="Captured image", use_container_width=True)
+        st.warning("No face detected — please face the camera and try again.")
