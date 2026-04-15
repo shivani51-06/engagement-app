@@ -4,4 +4,4 @@ torchvision
 opencv-python-headless
 Pillow
 numpy
-gdown
+gdown>=4.6.0,<5.0.0

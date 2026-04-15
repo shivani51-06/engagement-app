@@ -8,12 +8,9 @@ from model_v2 import EfficientNetB2
 import gdown
 import os
 
-# ── MODEL DOWNLOAD ───────────────────────────────────────────
+# ── MODEL CONFIG ─────────────────────────────────────────────
 MODEL_PATH = "final_model_v2.pth"
-url = "https://drive.google.com/uc?id=1C0TaYyVNat46tI76BCUFCtgxOljN0k96"
-
-if not os.path.exists(MODEL_PATH):
-    gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
+GDRIVE_URL = "https://drive.google.com/uc?id=1C0TaYyVNat46tI76BCUFCtgxOljN0k96"
 
 # ── PAGE CONFIG ──────────────────────────────────────────────
 st.set_page_config(
@@ -40,10 +37,13 @@ TRANSFORM = transforms.Compose([
 # ── LOAD MODEL ───────────────────────────────────────────────
 @st.cache_resource
 def load_model():
+    if not os.path.exists(MODEL_PATH):
+        with st.spinner("Downloading model weights…"):
+            gdown.download(GDRIVE_URL, MODEL_PATH, quiet=False, fuzzy=True)
     device = torch.device("cpu")
     model = EfficientNetB2()
     model.load_state_dict(
-        torch.load(MODEL_PATH, map_location=device)
+        torch.load(MODEL_PATH, map_location=device, weights_only=True)
     )
     model.eval()
     return model, device
