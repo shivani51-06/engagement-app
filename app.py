@@ -19,153 +19,122 @@ st.set_page_config(
     layout="centered"
 )
 
-# ── GLOBAL STYLES ─────────────────────────────────────────────
+# ── STYLES ───────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
+    font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Dark navy background ── */
+/* Background */
 .stApp {
-    background: #0D1117;
-    color: #E6EDF3;
+    background-color: #111111;
+    color: #EDEDED;
 }
 
-/* ── Gradient hero header ── */
-.hero {
-    background: linear-gradient(135deg, #6E3AFA 0%, #3A8BFA 60%, #00C9A7 100%);
-    border-radius: 16px;
-    padding: 40px 32px 32px;
-    margin-bottom: 28px;
-    box-shadow: 0 8px 32px rgba(110, 58, 250, 0.35);
+/* Red top stripe */
+.stApp::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: #B91C1C;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
 }
-.hero h1 {
-    font-size: 2rem;
-    font-weight: 900;
-    color: #ffffff;
-    margin: 0 0 8px;
-    letter-spacing: -0.5px;
+
+/* Page title */
+h1 {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: #F5F5F5 !important;
+    margin-bottom: 2px !important;
 }
-.hero p {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.82);
+.subtitle {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+/* Divider */
+hr { border-color: #222 !important; }
+
+/* Result display */
+.result-wrap {
+    margin: 20px 0 6px;
+    padding: 18px 20px;
+    border-left: 3px solid #B91C1C;
+    background: #1A1A1A;
+}
+.result-label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+}
+.result-note {
+    font-size: 0.8rem;
+    color: #777;
     margin: 0;
 }
+.label-low    { color: #EF4444; }
+.label-medium { color: #F59E0B; }
+.label-high   { color: #22C55E; }
 
-/* ── Camera widget label ── */
-label[data-testid="stCameraInputLabel"] p {
-    color: #A0AEC0 !important;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-
-/* ── Result cards ── */
-.result-card {
-    border-radius: 14px;
-    padding: 24px 28px;
-    margin: 20px 0 12px;
-    text-align: center;
-}
-.result-card .verdict {
-    font-size: 1.7rem;
-    font-weight: 900;
-    letter-spacing: -0.3px;
-    margin: 0 0 4px;
-}
-.result-card .sub {
-    font-size: 0.85rem;
-    opacity: 0.75;
-    margin: 0;
-}
-
-.card-low {
-    background: linear-gradient(135deg, #3D0C11, #6B1A22);
-    border: 1px solid #C0392B;
-    box-shadow: 0 0 24px rgba(192, 57, 43, 0.4);
-    color: #FF6B6B;
-}
-.card-medium {
-    background: linear-gradient(135deg, #3D2700, #6B4200);
-    border: 1px solid #D4820A;
-    box-shadow: 0 0 24px rgba(212, 130, 10, 0.4);
-    color: #FFB347;
-}
-.card-high {
-    background: linear-gradient(135deg, #003D22, #00622F);
-    border: 1px solid #27AE60;
-    box-shadow: 0 0 24px rgba(39, 174, 96, 0.4);
-    color: #5CFF9D;
-}
-
-/* ── Confidence section ── */
-.conf-header {
-    font-size: 0.75rem;
+/* Confidence */
+.conf-title {
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #8B949E;
-    margin: 20px 0 10px;
+    color: #555;
+    margin: 18px 0 8px;
 }
 
-/* ── Progress bar colours ── */
-[data-testid="stProgress"] > div > div {
-    background: linear-gradient(90deg, #6E3AFA, #3A8BFA) !important;
-    border-radius: 99px;
-}
-
-/* ── Warning ── */
-.stAlert {
-    background: #1C2128 !important;
-    border: 1px solid #30363D !important;
-    color: #CDD9E5 !important;
-    border-radius: 10px;
-}
-
-/* ── Sidebar ── */
+/* Sidebar */
 section[data-testid="stSidebar"] {
-    background: #161B22;
-    border-right: 1px solid #21262D;
+    background: #181818;
+    border-right: 1px solid #222;
 }
-.sidebar-title {
-    font-size: 0.7rem;
+.sb-heading {
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #6E3AFA;
+    color: #B91C1C;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin: 0 0 10px;
 }
-.sidebar-row {
+.sb-row {
     display: flex;
     justify-content: space-between;
-    padding: 7px 0;
-    border-bottom: 1px solid #21262D;
-    font-size: 0.83rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+    font-size: 0.82rem;
 }
-.sidebar-row span:first-child { color: #8B949E; }
-.sidebar-row span:last-child  { color: #E6EDF3; font-weight: 600; }
-.badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 99px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin: 4px 2px 0;
+.sb-row .k { color: #555; }
+.sb-row .v { color: #DDD; font-weight: 500; }
+.sb-foot {
+    font-size: 0.72rem;
+    color: #444;
+    margin-top: 24px;
 }
-.badge-low    { background: #3D1515; color: #FF6B6B; }
-.badge-med    { background: #3D2700; color: #FFB347; }
-.badge-high   { background: #003D22; color: #5CFF9D; }
-.footer-text  { font-size: 0.75rem; color: #484F58; margin-top: 20px; }
+
+/* Warning */
+div[data-testid="stAlert"] {
+    background: #1A1A1A !important;
+    border: 1px solid #2A2A2A !important;
+    border-left: 3px solid #B91C1C !important;
+    color: #AAA !important;
+    border-radius: 4px;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ── LABELS ───────────────────────────────────────────────────
 LABELS = {
-    0: ("Low Engagement",    "card-low",    "Student appears disengaged."),
-    1: ("Medium Engagement", "card-medium", "Student shows partial attention."),
-    2: ("High Engagement",   "card-high",   "Student is actively engaged."),
+    0: ("Low",    "label-low"),
+    1: ("Medium", "label-medium"),
+    2: ("High",   "label-high"),
 }
 
 # ── TRANSFORM ────────────────────────────────────────────────
@@ -209,33 +178,30 @@ def predict(face_img):
 
 # ── SIDEBAR ──────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("<div class='sidebar-title'>Project Info</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sb-heading'>Model</div>", unsafe_allow_html=True)
     st.markdown("""
-<div class='sidebar-row'><span>Model</span><span>EfficientNet-B2</span></div>
-<div class='sidebar-row'><span>Dataset</span><span>DAiSEE</span></div>
-<div class='sidebar-row'><span>Test accuracy</span><span>72.6%</span></div>
-<div class='sidebar-row'><span>Val accuracy</span><span>74.75%</span></div>
+<div class='sb-row'><span class='k'>Architecture</span><span class='v'>EfficientNet-B2</span></div>
+<div class='sb-row'><span class='k'>Dataset</span><span class='v'>DAiSEE</span></div>
+<div class='sb-row'><span class='k'>Test accuracy</span><span class='v'>72.6%</span></div>
+<div class='sb-row'><span class='k'>Val accuracy</span><span class='v'>74.75%</span></div>
 """, unsafe_allow_html=True)
 
-    st.markdown("<br><div class='sidebar-title'>Classes</div>", unsafe_allow_html=True)
+    st.markdown("<br><div class='sb-heading'>Classes</div>", unsafe_allow_html=True)
     st.markdown("""
-<span class='badge badge-low'>Low</span>
-<span class='badge badge-med'>Medium</span>
-<span class='badge badge-high'>High</span>
+<div class='sb-row'><span class='k'>0</span><span class='v' style='color:#EF4444'>Low</span></div>
+<div class='sb-row'><span class='k'>1</span><span class='v' style='color:#F59E0B'>Medium</span></div>
+<div class='sb-row'><span class='k'>2</span><span class='v' style='color:#22C55E'>High</span></div>
 """, unsafe_allow_html=True)
 
-    st.markdown("<div class='footer-text'>SASTRA Deemed University</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sb-foot'>SASTRA Deemed University</div>", unsafe_allow_html=True)
 
-# ── HERO HEADER ──────────────────────────────────────────────
-st.markdown("""
-<div class='hero'>
-    <h1>Student Engagement Detector</h1>
-    <p>Real-time facial engagement analysis powered by EfficientNet-B2</p>
-</div>
-""", unsafe_allow_html=True)
+# ── PAGE HEADER ──────────────────────────────────────────────
+st.title("Engagement Analysis")
+st.markdown("<div class='subtitle'>Facial engagement detection — EfficientNet-B2 / DAiSEE</div>", unsafe_allow_html=True)
+st.markdown("---")
 
 # ── CAMERA INPUT ─────────────────────────────────────────────
-img_file = st.camera_input("Position your face in frame and capture")
+img_file = st.camera_input("Capture")
 
 if img_file is not None:
     image = Image.open(img_file)
@@ -249,26 +215,26 @@ if img_file is not None:
 
     if len(faces) > 0:
         x, y, w, h = sorted(faces, key=lambda f: f[2] * f[3])[-1]
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (110, 58, 250), 2)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (185, 28, 28), 2)
 
         face_crop        = frame[y:y+h, x:x+w]
         label_idx, probs = predict(face_crop)
-        label_name, css_class, subtitle = LABELS[label_idx]
+        label_name, css_class = LABELS[label_idx]
 
-        st.image(image, caption="Captured image", use_container_width=True)
+        st.image(image, use_container_width=True)
 
         st.markdown(
-            f"<div class='result-card {css_class}'>"
-            f"  <p class='verdict'>{label_name}</p>"
-            f"  <p class='sub'>{subtitle}</p>"
+            f"<div class='result-wrap'>"
+            f"<p class='result-note'>Engagement level</p>"
+            f"<p class='result-label {css_class}'>{label_name}</p>"
             f"</div>",
             unsafe_allow_html=True
         )
 
-        st.markdown("<div class='conf-header'>Confidence breakdown</div>", unsafe_allow_html=True)
-        for i, (name, _, _sub) in LABELS.items():
-            st.progress(float(probs[i]), text=f"{name}  {probs[i]*100:.1f}%")
+        st.markdown("<div class='conf-title'>Confidence</div>", unsafe_allow_html=True)
+        for i, (name, _) in LABELS.items():
+            st.progress(float(probs[i]), text=f"{name} — {probs[i]*100:.1f}%")
 
     else:
-        st.image(image, caption="Captured image", use_container_width=True)
-        st.warning("No face detected — make sure your face is clearly visible and try again.")
+        st.image(image, use_container_width=True)
+        st.warning("No face detected. Face the camera directly and try again.")
